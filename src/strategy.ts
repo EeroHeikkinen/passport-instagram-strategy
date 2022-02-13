@@ -28,6 +28,7 @@ class InstagramStrategy extends Strategy {
 
   async authenticate(req: Request, options?: any) {
     options = options || {};
+    const optionsOrDefaultCallbackURL = options.callbackURL || this.callbackUrl;
 
     let tokenData: any = {};
     if (req.query && req.query.code) {
@@ -36,7 +37,7 @@ class InstagramStrategy extends Strategy {
         const shortLivedAccessTokenData: ShortLivedAuthTokenResponse = await getShortLivedAccessToken({
           clientId: this.clientId,
           clientSecret: this.clientSecret,
-          callbackUrl: this.callbackUrl,
+          callbackUrl: optionsOrDefaultCallbackURL,
           code: String(req.query.code)
         });
 
@@ -87,7 +88,7 @@ class InstagramStrategy extends Strategy {
         }
       };
       const scopes = getScope(options.scope, options.scopeSeparator || ",");
-      const redirectUrl = `${AUTHORIZE_URL}?app_id=${this.clientId}&redirect_uri=${this.callbackUrl}&scope=${scopes}&state=${options.state}&response_type=code`;
+      const redirectUrl = `${AUTHORIZE_URL}?app_id=${this.clientId}&redirect_uri=${optionsOrDefaultCallbackURL}&scope=${scopes}&state=${options.state}&response_type=code`;
       const location = url.format(redirectUrl);
       this.redirect(location);
     }
