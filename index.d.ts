@@ -8,6 +8,7 @@ interface StrategyOptions {
   scopeSeparator?: string;
   sessionKey?: string;
   state?: any;
+  passReqToCallback?: boolean;
 }
 interface ShortLivedAuthTokenResponse {
   access_token: string;
