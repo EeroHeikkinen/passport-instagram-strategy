@@ -27,8 +27,12 @@ interface UserProfileResponse {
   username: string;
 }
 
-type VerifyFunction = (...args: any[]) => void;
-
+type VerifyFunction = (
+  req: any,
+  accessToken: any,
+  profile: any,
+  cb?: any,
+) => void;
 declare class InstagramStrategy extends Strategy {
   constructor(options: StrategyOptions, verify: VerifyFunction);
 }

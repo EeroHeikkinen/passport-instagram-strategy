@@ -24,7 +24,9 @@ class InstagramStrategy extends Strategy {
     this.clientId = options.clientId;
     this.clientSecret = options.clientSecret;
     this.callbackUrl = options.callbackUrl;
-    this.passReqToCallback = options.passReqToCallback
+    if (options.passReqToCallback) {
+      this.passReqToCallback = options.passReqToCallback;
+    }
 
     this.verify = verify;
   }
@@ -67,8 +69,8 @@ class InstagramStrategy extends Strategy {
         if (!userData) {
           return this.error(new Error("Failed to fetch user data"));
         } else {
-          if(this.passReqToCallback) {
-            this.verify(req, tokenData.access_token, userData, (err, user) => {
+          if (this.passReqToCallback) {
+            this.verify(req, tokenData.access_token, userData, (err: any, user: any) => {
               if (err) {
                 this.fail(err);
               } else {
@@ -79,7 +81,7 @@ class InstagramStrategy extends Strategy {
               }
             });
           } else {
-            this.verify(tokenData.access_token, userData, (err, user) => {
+            this.verify(tokenData.access_token, userData, (err: any, user: any) => {
               if (err) {
                 this.fail(err);
               } else {

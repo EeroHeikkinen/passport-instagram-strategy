@@ -75,6 +75,9 @@ var InstagramStrategy = (function (_super) {
         _this.clientId = options.clientId;
         _this.clientSecret = options.clientSecret;
         _this.callbackUrl = options.callbackUrl;
+        if (options.passReqToCallback) {
+            _this.passReqToCallback = options.passReqToCallback;
+        }
         _this.verify = verify;
         return _this;
     }
@@ -121,14 +124,26 @@ var InstagramStrategy = (function (_super) {
                             return [2, this.error(new Error("Failed to fetch user data"))];
                         }
                         else {
-                            this.verify(tokenData.access_token, userData, function (err, user) {
-                                if (err) {
-                                    _this.fail(err);
-                                }
-                                else {
-                                    _this.success(__assign({ provider: "instagram" }, user));
-                                }
-                            });
+                            if (this.passReqToCallback) {
+                                this.verify(req, tokenData.access_token, userData, function (err, user) {
+                                    if (err) {
+                                        _this.fail(err);
+                                    }
+                                    else {
+                                        _this.success(__assign({ provider: "instagram" }, user));
+                                    }
+                                });
+                            }
+                            else {
+                                this.verify(tokenData.access_token, userData, function (err, user) {
+                                    if (err) {
+                                        _this.fail(err);
+                                    }
+                                    else {
+                                        _this.success(__assign({ provider: "instagram" }, user));
+                                    }
+                                });
+                            }
                         }
                         return [3, 8];
                     case 7:
