@@ -15,6 +15,7 @@ class InstagramStrategy extends Strategy {
   clientId: string;
   clientSecret: string;
   callbackUrl: string;
+  passReqToCallback: boolean;
   verify: VerifyFunction;
   name = "instagram";
 
@@ -23,6 +24,8 @@ class InstagramStrategy extends Strategy {
     this.clientId = options.clientId;
     this.clientSecret = options.clientSecret;
     this.callbackUrl = options.callbackUrl;
+    this.passReqToCallback = options.passReqToCallback
+
     this.verify = verify;
   }
 
@@ -64,16 +67,29 @@ class InstagramStrategy extends Strategy {
         if (!userData) {
           return this.error(new Error("Failed to fetch user data"));
         } else {
-          this.verify(tokenData.access_token, userData, (err, user) => {
-            if (err) {
-              this.fail(err);
-            } else {
-              this.success({
-                provider: "instagram",
-                ...user
-              });
-            }
-          });
+          if(this.passReqToCallback) {
+            this.verify(req, tokenData.access_token, userData, (err, user) => {
+              if (err) {
+                this.fail(err);
+              } else {
+                this.success({
+                  provider: "instagram",
+                  ...user
+                });
+              }
+            });
+          } else {
+            this.verify(tokenData.access_token, userData, (err, user) => {
+              if (err) {
+                this.fail(err);
+              } else {
+                this.success({
+                  provider: "instagram",
+                  ...user
+                });
+              }
+            });
+          }
         }
       } catch (err) {
         return this.error(new Error("Can't get user profile"));
